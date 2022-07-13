@@ -1,6 +1,7 @@
 package com.dscatalog.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -38,8 +39,31 @@ public class CategoryService {
 		return convereterEntidadeParaDTO(entity);
 	}
 
+	@Transactional
 	public Category insert(CategoryDTO dto) {
 		return repository.save(convereteDTOParaEntity(dto));
+
+	}
+
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO dto) {
+
+		logger.info("Atualizando Categoria");
+
+		Optional<Category> entity = repository.findById(id);
+
+		entity.stream().map(newEntity -> {
+			newEntity.setName(dto.getName());
+			return convereterEntidadeParaDTO(repository.save(newEntity));
+
+		}).collect(Collectors.toList());
+		return dto;
+
+	}
+
+	public void delete(Long id) {
+
+		repository.deleteById(id);
 
 	}
 

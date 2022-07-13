@@ -1,34 +1,54 @@
 package com.dscatalog.dto;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.Instant;
 
 public class ExceptionDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String title;
-	private List<String> detail;
+	private Instant timestamp;
+	
+	private Integer status;
+	
+	private String error;
+	
+	private String massage;
+	
 	private String path;
-	private LocalDate timestamp;
 	
 	public ExceptionDTO() {}
 
-	public String getTitle() {
-		return title;
+	public Instant getTimestamp() {
+		return timestamp;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setTimestamp(Instant timestamp) {
+		this.timestamp = timestamp;
 	}
 
-	public List<String> getDetail() {
-		return detail;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setDetail(List<String> detail) {
-		this.detail = detail;
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public String getMassage() {
+		return massage;
+	}
+
+	public void setMassage(String massage) {
+		this.massage = massage;
 	}
 
 	public String getPath() {
@@ -38,15 +58,8 @@ public class ExceptionDTO implements Serializable {
 	public void setPath(String path) {
 		this.path = path;
 	}
-
-	public LocalDate getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(LocalDate timestamp) {
-		this.timestamp = timestamp;
-	}
-
+	
+	
 	
 
 }
