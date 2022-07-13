@@ -12,7 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dscatalog.dto.CategoryDTO;
 import com.dscatalog.entities.Category;
+import com.dscatalog.exception.CategoryAtualizadaException;
+import com.dscatalog.exception.CategoryCadastradaException;
 import com.dscatalog.exception.DadosNaoLocalizadosException;
+import com.dscatalog.exception.DeleteException;
 import com.dscatalog.repositories.CategoryRepository;
 
 @Service
@@ -41,12 +44,14 @@ public class CategoryService {
 
 	@Transactional
 	public Category insert(CategoryDTO dto) {
+		verificarExistenciaNoBanco(dto);
 		return repository.save(convereteDTOParaEntity(dto));
 
 	}
 
 	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO dto) {
+		validarParaAtualizar(dto);
 
 		logger.info("Atualizando Categoria");
 
@@ -62,9 +67,8 @@ public class CategoryService {
 	}
 
 	public void delete(Long id) {
-
+		verificarIdParaDeletar(id);
 		repository.deleteById(id);
-
 	}
 
 	// conversores
@@ -84,6 +88,54 @@ public class CategoryService {
 		entity.setId(dto.getId());
 		entity.setName(dto.getName());
 		return entity;
+
+	}
+
+	// verificadores
+
+	public void verificarExistenciaNoBanco(CategoryDTO dto) {
+
+		logger.info("VERIFICANDO EXISTENCIA DE CATEGORIA SALVA NO BANCO");
+
+		if (dto.getName().isEmpty() || dto.getName().isBlank()) {
+			logger.error("NÃO PODE CADASTRAR CATEGORIA NULO OU BRANCO ", dto.getName());
+			throw new CategoryCadastradaException("Nao pode cadastrar Categoria nulo ou branco " + dto.getName());
+		}
+
+		if (repository.findByName(dto.getName()).isPresent()) {
+			logger.error("JÁ EXISTE CATEGORIA CADASTRADA COM O NOME: " + dto.getName() + "Com o id {} " + dto.getId());
+			throw new CategoryCadastradaException("Já Existe Categoria cadastrada com o nome: " + dto.getName());
+		}
+	}
+
+	private void validarParaAtualizar(CategoryDTO dto) {
+
+		logger.info("VALIDANDO LOJA PARA ATUALIZAR ");
+
+		if (dto.getId() == null) {
+			logger.error("NÃO PODE ATUALIZAR CATEGORIA COM ID NULO ", dto.getId());
+			throw new CategoryAtualizadaException("Nao pode atualizar categoria com id nulo: " + dto.getId());
+		}
+
+		if (dto.getId() <= 0) {
+			logger.error("NÃO PODE ATUALIZAR CATEGORIA COM ID MENOR OU IGUAL A ZERO " + dto.getId());
+			throw new CategoryAtualizadaException("Nao pode Atualizar categoria menor ou igual a zero " + dto.getId());
+		}
+
+		if (repository.findByName(dto.getName()).isPresent()) {
+			logger.error("NÃO PODE ATUALIZAR CATEGORIA COM O MESMO NOME JÁ EXISTESNTE: " + dto.getName());
+			throw new CategoryAtualizadaException(
+					"Não pode atualizar categoria com o nome já existente: " + dto.getName());
+		}
+
+	}
+
+	public void verificarIdParaDeletar(Long id) {
+		if (!repository.findById(id).isPresent()) {
+			logger.error(id + " : Não localizado para deletar");
+			throw new DeleteException("ID: " + id + " não localizado para deletar");
+
+		}
 
 	}
 
