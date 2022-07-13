@@ -38,6 +38,11 @@ public class CategoryService {
 		return convereterEntidadeParaDTO(entity);
 	}
 
+	public Category insert(CategoryDTO dto) {
+		return repository.save(convereteDTOParaEntity(dto));
+
+	}
+
 	// conversores
 
 	public CategoryDTO convereterEntidadeParaDTO(Category entity) {
@@ -46,6 +51,15 @@ public class CategoryService {
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 		return dto;
+
+	}
+
+	public Category convereteDTOParaEntity(CategoryDTO dto) {
+
+		Category entity = new Category();
+		entity.setId(dto.getId());
+		entity.setName(dto.getName());
+		return entity;
 
 	}
 
