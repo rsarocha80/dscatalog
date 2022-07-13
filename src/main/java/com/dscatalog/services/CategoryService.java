@@ -1,12 +1,13 @@
 package com.dscatalog.services;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,10 @@ public class CategoryService {
 	private CategoryRepository repository;
 
 	@Transactional(readOnly = true)
-	public List<CategoryDTO> findAll() {
+	public Page<CategoryDTO> findAllPage(PageRequest page) {
 		logger.info("Buscando todas Categorias");
-		List<Category> list = repository.findAll();
-		return list.stream().map(this::convereterEntidadeParaDTO).collect(Collectors.toList());
+		Page<Category> list = repository.findAll(page);
+		return list.map(this::convereterEntidadeParaDTO);
 	}
 
 	@Transactional(readOnly = true)
